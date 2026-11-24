@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GOOOD GAMING</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080b18;color:white;
+ font-family:Arial,sans-serif;
+}
+header{
+ padding:20px;text-align:center;
+ background:#151a30;border-bottom:2px solid #985cff;
+}
+header h1{color:#b78aff}
+.hero{
+ text-align:center;padding:65px 15px;
+ background:linear-gradient(135deg,#401a79,#101b3c);
+}
+.hero h2{font-size:38px}
+button{
+ background:linear-gradient(120deg,#9b4dff,#464bff);
+ border:0;border-radius:9px;
+ padding:12px 20px;color:white;
+ cursor:pointer;font-weight:bold;
+}
+section{padding:25px 15px}
+.search{
+ width:100%;padding:14px;
+ border-radius:10px;border:1px solid #555;
+ background:#171d32;color:white;
+}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.grid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:14px;
+}
+.card{
+ background:linear-gradient(145deg,#252d50,#11162a);
+ padding:20px 8px;text-align:center;
+ border:1px solid #444b75;
+ border-radius:15px;
+ box-shadow:0 8px 18px #0008;
+ transition:.2s;
+}
+.card:hover{transform:translateY(-5px)}
+.icon{font-size:42px}
+.card p{color:#aaa;font-size:13px}
+#gameArea{
+ display:none;text-align:center;
+ background:#171d35;padding:22px;
+ border-radius:15px;margin-top:20px;
+}
+#gameArea h2{color:#c6a4ff}
+#score{font-size:32px;color:#b78aff}
+footer{text-align:center;padding:25px;background:#151a30}
+@media(min-width:650px){
+ .grid{grid-template-columns:repeat(4,1fr)}
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🎮 GOOOD GAMING</h1>
+<p>YOUR ULTIMATE GAMING WORLD</p>
+</header>
+
+<div class="hero">
+<h2>WELCOME GAMER!</h2>
+<p>PLAY • WIN • ENJOY</p>
+<button onclick="document.getElementById('games').scrollIntoView()">
+EXPLORE GAMES
+</button>
+</div>
+
+<section id="games">
+<h2>🔥 ALL GAMES</h2>
+<input class="search" id="search"
+placeholder="Search games..."
+oninput="searchGames()">
+
+<div class="filters">
+<button onclick="filter('All')">All</button>
+<button onclick="filter('Arcade')">Arcade</button>
+<button onclick="filter('Puzzle')">Puzzle</button>
+<button onclick="filter('Racing')">Racing</button>
+<button onclick="filter('Sports')">Sports</button>
+</div>
+
+<div class="grid" id="grid">
+<div class="card" data-cat="Arcade" data-name="Click Rush">
+<div class="icon">⚡</div>
+<h3>Click Rush</h3>
+<p>Test your speed</p>
+<button onclick="startClick()">PLAY</button>
+</div>
+
+<div class="card" data-cat="Puzzle" data-name="Number Guess">
+<div class="icon">🔢</div>
+<h3>Number Guess</h3>
+<p>Find the number</p>
+<button onclick="startGuess()">PLAY</button>
+</div>
+
+<div class="card" data-cat="Puzzle" data-name="Memory Game">
+<div class="icon">🧠</div>
+<h3>Memory Game</h3>
+<p>Match the cards</p>
+<button onclick="startMemory()">PLAY</button>
+</div>
+
+<div class="card" data-cat="Racing" data-name="Car Racing">
+<div class="icon">🏎️</div>
+<h3>Car Racing</h3>
+<p>Coming Soon</p>
+</div>
+
+<div class="card" data-cat="Sports" data-name="Football">
+<div class="icon">⚽</div>
+<h3>Football</h3>
+<p>Coming Soon</p>
+</div>
+
+<div class="card" data-cat="Arcade" data-name="Running">
+<div class="icon">🏃</div>
+<h3>Running</h3>
+<p>Coming Soon</p>
+</div>
+
+<div class="card" data-cat="Sports" data-name="Basketball">
+<div class="icon">🏀</div>
+<h3>Basketball</h3>
+<p>Coming Soon</p>
+</div>
+
+<div class="card" data-cat="Arcade" data-name="Adventure">
+<div class="icon">🌍</div>
+<h3>Adventure</h3>
+<p>Coming Soon</p>
+</div>
+</div>
+
+<div id="gameArea">
+<h2 id="gameTitle"></h2>
+<div id="gameContent"></div>
+<br>
+<button onclick="closeGame()">CLOSE GAME</button>
+</div>
+</section>
+
+<section style="text-align:center">
+<h2>🏆 YOUR BEST SCORE</h2>
+<p id="best">0</p>
+</section>
+
+<footer>
+<h2>🎮 GOOOD GAMING</h2>
+<p>Play More. Have Fun!</p>
+<p>© 2026 GOOOD GAMING</p>
+</footer>
+
+<script>
+let timer;
+let secret;
+let clicks=0;
+let selected=[];
+let cards=[];
+let matches=0;
+
+function filter(cat){
+ document.querySelectorAll('.card').forEach(c=>{
+ c.style.display=(cat==='All'||c.dataset.cat===cat)?'':'none';
+ });
+ document.getElementById('search').value='';
+}
+
+function searchGames(){
+ let q=document.getElementById('search').value.toLowerCase();
+ document.querySelectorAll('.card').forEach(c=>{
+ c.style.display=c.dataset.name.toLowerCase().includes(q)?'':'none';
+ });
+}
+
+function show(title,html){
+ clearInterval(timer);
+ document.getElementById('gameArea').style.display='block';
+ document.getElementById('gameTitle').textContent=title;
+ document.getElementById('gameContent').innerHTML=html;
+ document.getElementById('gameArea').scrollIntoView({behavior:'smooth'});
+}
+
+function closeGame(){
+ clearInterval(timer);
+ document.getElementById('gameArea').style.display='none';
+}
+
+function startClick(){
+ clicks=0;
+ let time=10;
+ show('⚡ CLICK RUSH',`
+ <h3>Click as fast as possible!</h3>
+ <h2 id="clock">10</h2>
+ <div id="score">0</div>
+ <button id="clickBtn">CLICK ME!</button>
+ <p id="result"></p>
+ `);
+ document.getElementById('clickBtn').onclick=()=>{
+ clicks++;
+ document.getElementById('score').textContent=clicks;
+ };
+ timer=setInterval(()=>{
+ time--;
+ let clock=document.getElementById('clock');
+ if(clock)clock.textContent=time;
+ if(time<=0){
+ clearInterval(timer);
+ document.getElementById('clickBtn').disabled=true;
+ document.getElementById('result').textContent='GAME OVER! Score: '+clicks;
+ let old=Number(localStorage.getItem('best')||0);
+ if(clicks>old)localStorage.setItem('best',clicks);
+ updateBest();
+ }
+ },1000);
+}
+
+function startGuess(){
+ secret=Math.floor(Math.random()*20)+1;
+ show('🔢 NUMBER GUESS',`
+ <p>Guess a number between 1 and 20</p>
+ <input id="guess" type="number" min="1" max="20">
+ <button onclick="checkGuess()">GUESS</button>
+ <p id="answer"></p>
+ `);
+}
+
+function checkGuess(){
+ let n=Number(document.getElementById('guess').value);
+ let a=document.getElementById('answer');
+ if(n<1||n>20){a.textContent='Enter 1 to 20';return}
+ if(n===secret)a.textContent='🏆 YOU WIN!';
+ else a.textContent=n<secret?'Go Higher!':'Go Lower!';
+}
+
+function startMemory(){
+ cards=['🍎','🚗','⚽','🎮','🍎','🚗','⚽','🎮'];
+ cards.sort(()=>Math.random()-.5);
+ selected=[];
+ matches=0;
+ show('🧠 MEMORY GAME',`
+ <p>Find all matching pairs!</p>
+ <div id="board" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+ ${cards.map((c,i)=>`
+ <button id="m${i}" onclick="flip(${i})">❓</button>
+ `).join('')}
+ </div>
+ <p id="memoryResult">Pairs: 0/4</p>
+ `);
+}
+
+function flip(i){
+ let b=document.getElementById('m'+i);
+ if(selected.length>=2||b.disabled)return;
+ b.textContent=cards[i];
+ b.disabled=true;
+ selected.push(i);
+ if(selected.length===2){
+ if(cards[selected[0]]===cards[selected[1]]){
+ matches++;
+ selected=[];
+ document.getElementById('memoryResult').textContent='Pairs: '+matches+'/4';
+ if(matches===4)document.getElementById('memoryResult').textContent='🏆 YOU WIN!';
+ }else{
+ let pair=[...selected];
+ setTimeout(()=>{
+ pair.forEach(n=>{
+ let el=document.getElementById('m'+n);
+ if(el){el.textContent='❓';el.disabled=false}
+ });
+ selected=[];
+ },800);
+ }
+ }
+}
+
+function updateBest(){
+ document.getElementById('best').textContent=
+ localStorage.getItem('best')||0;
+}
+updateBest();
+</script>
+</body>
+</html>
